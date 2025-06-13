@@ -21,3 +21,17 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# ...existing code...
+
+# Backend environment variables
+/backend/.env
+
+# Firebase service account (se usar o JSON)
+backend/service-account.json
+
+# Node modules do backend
+/backend/node_modules
+
+# Logs do backend
+/backend/npm-debug.log*

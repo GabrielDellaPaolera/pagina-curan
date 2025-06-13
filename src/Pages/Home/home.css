@@ -1,0 +1,279 @@
+.home-container {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding:0;
+  background: #f7f9fa;
+  min-height: 100vh;
+}
+
+.main-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  padding: 40px 32px;
+  max-width: none;
+  width:100vw;
+  height: 440px;
+  margin:0;
+  background-image: url('https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2024/09/IA-na-medicina.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.main-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.75)); /* ajuste a opacidade conforme necessário */
+  z-index: 0;
+  pointer-events: none;
+}
+
+.image-section,
+.info-section {
+  position: relative;
+  z-index: 1;
+}
+
+.image-section {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  transition: transform 0.8s cubic-bezier(.77,0,.18,1), opacity 0.8s;
+}
+
+.image-section.image-out {
+  transform: translateX(-300%);
+  opacity: 0;
+}
+.image-section img {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
+.info-section {
+  flex: 2;
+  margin-left: 140px;
+}
+
+.info-section h1 {
+  margin: 0 8px 64px 0;
+  margin-right: 100px;
+  font-size: 2.5rem;
+  color: #2a3a4a;
+}
+
+.info-section p {
+  font-size: 1.2rem;
+  color: #4a5a6a;
+  padding-bottom: 60px;
+}
+
+.info-section h1, .info-section p {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.schedule-btn {
+  background: #3a7bd5;
+  color: #fff;
+  border: none;
+  margin-left: 100px;
+  padding: 14px 120px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.schedule-btn:hover {
+  background: #285a99;
+}
+
+
+
+/* Segunda div carrosel de imagens */
+
+.treatments-carousel {
+  display: flex;
+  align-items: stretch; /* Estica os filhos na altura */
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  height: 400px; /* igual ao .treatment-card */
+  position: relative;
+}
+
+.treatment-card {
+  flex: 1 1 100%;
+  width: 100%;
+  border: 2px solid #e0e0e0;
+  background-size: cover;
+  background-position: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  min-width: 400px;
+  max-width: 100%;
+  padding: 0; /* Remova o padding interno */
+}
+
+.treatment-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0.5)); /* Mesma opacidade da primeira section */
+  z-index: 1;
+}
+
+.treatments-carousel-section {
+  width: 100vw;
+  margin: 0; /* Centraliza horizontalmente */
+  text-align: center;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+
+.treatment-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0px 84px 0px 84px;
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  z-index: 2;
+  background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 80%);  /* apenas para teste */
+  box-sizing: border-box;
+}
+ 
+.treatment-overlay h3, 
+.treatment-overlay .typewriter {
+  margin-bottom: 0;
+}
+
+.treatment-overlay h3{
+  color:rgb(15, 18, 43);
+  font-size: 3rem;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+}
+
+.treatment-overlay .typewriter {
+  font-size: 1rem;
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+
+.arrow-btn {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  transform: translateY(-50%);
+  background: transparent; /* Fundo transparente */
+  border: none;
+  color: transparent;      /* Seta invisível por padrão */
+  font-size: 2rem;
+  cursor: pointer;
+  border-radius: 0;        /* Sem borda arredondada */
+  padding: 24px;
+  opacity: 0;              /* Invisível por padrão */
+  pointer-events: none;
+  transition: 
+  opacity 0.2s,
+  color 0.2s,
+  transform 0.2s;
+}
+
+.treatments-carousel:hover .arrow-btn,
+.treatments-carousel:focus-within .arrow-btn {
+  opacity: 1;
+  color: #8d9c95;         /* Seta visível ao passar mouse */
+  pointer-events: auto;
+}
+
+.arrow-btn.arrow-left {
+  left: 16px;
+}
+
+.arrow-btn.arrow-right {
+  right: 16px;
+}
+
+
+
+/* Review part */
+.review-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px; /* espaço entre setas e conteúdo */
+  padding: 40px 0;
+}
+
+.review-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  font-size: 2rem;
+  color: #2a3a4a;
+}
+
+.review-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #2a3a4a;
+}
+
+.review-card p {
+  font-size: 1rem;
+  color: #4a5a6a;
+  margin: 18px 0;
+}
+
+.review-card span {
+  font-size: 0.8rem;
+  color: #24272a;
+}
+
+.review-stars span {
+  font-size: 0.8rem;
+}
+
+.arrow2-btn {
+  background: none;
+  border: none;
+  color: #1d4127;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.arrow2-btn:hover {
+  color: #3a7bd5;
+  background: #f2f2f2;
+}
+

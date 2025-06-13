@@ -1,0 +1,65 @@
+.footer-container{
+  background-color: #1d4127;
+  position: relative;
+   padding: 10px 16px;
+}
+
+.footer-flex {
+  display: flex;
+  justify-content: center;   /* Centraliza o conteúdo principal */
+  align-items: center;
+  margin: 0 auto;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza o span e os ícones */
+}
+
+.footer-content nav {
+  display: flex;
+  gap: 13px;
+  margin-top: 16px;
+}
+
+.footer-content a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.5rem;
+  transition: color 0.2s;
+}
+
+.footer-content a:hover {
+  color: #3a7bd5;
+}
+
+.footer-content nav svg {
+  font-size: 1.3rem;
+}
+
+.footer-dev {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-size: 0.7rem;
+  position: static;
+  margin-top: 12px; /* Ajuste este valor conforme desejar */
+}
+
+.footer-dev a {
+  color: #25d366; /* Cor do WhatsApp */
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.footer-dev a:hover {
+  color: #128c7e;
+}
+
+
+.footer-content > span {
+
+  color: #fff; /* Ou qualquer cor que preferir */
+}
