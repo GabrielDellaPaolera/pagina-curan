@@ -1,37 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useMemo } from 'react';
 import './home.css';
 import ImagemPerfil from '../../assets/doctor.png'; // Certifique-se de que o caminho está correto
 import { FaChevronRight,FaChevronLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import DepressaoImagem from '../../assets/backgroundImageDivTwoDepressao.png'; // Imagem de exemplo para depressão
+import AnsiedadeImagem from '../../assets/backgroundImageDivTwoAnsiedade.png'; // Imagem de exemplo para depressão
+import TranstornoImagem from '../../assets/backgroundImageDivTwoTranstorno.png'; // Imagem de exemplo para depressão
+import TdahImagem from '../../assets/backgroundImageDivTwoTdah.png'; // Imagem de exemplo para depressão
+import { useRef } from 'react';
+
+
 
 export default function Home() {
-
+  
   const [scrolled, setScrolled] = useState(false);
 
 
-    const treatments = [
+    const treatments = useMemo(() => [
   {
     image: DepressaoImagem,
     title: 'Depressão',
-    description: ' Tratamento humanizado para depressão, com acompanhamento clínico e psicoterápico personalizado.'
+    description: ' Oferecemos tratamento humanizado para depressão, com avaliação detalhada, acompanhamento clínico regular e suporte psicoterápico personalizado. Nosso objetivo é promover a recuperação do bem-estar emocional, restaurar a qualidade de vida e fortalecer a autonomia do paciente ao longo de todo o processo terapêutico.'
   },
   {
-    image: 'https://images.unsplash.com/photo-1512070679279-c2f999098c01?auto=format&fit=crop&w=600&q=80',
+    image: AnsiedadeImagem,
     title: 'Ansiedade',
-    description: ' Abordagem moderna para transtornos de ansiedade, focando em qualidade de vida e bem-estar.'
+    description: ' Realizamos uma abordagem moderna e integrada para transtornos de ansiedade, combinando intervenções clínicas, psicoterapia e orientações práticas para o dia a dia. Buscamos reduzir sintomas, prevenir recaídas e proporcionar mais equilíbrio, autoconfiança e qualidade de vida aos nossos pacientes.'
   },
   {
-    image: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b41?auto=format&fit=crop&w=600&q=80',
-    title: 'Transtorno Bipolar',
-    description: ' Diagnóstico preciso e tratamento contínuo para estabilização do humor e autonomia do paciente.'
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=600&q=80',
+    image: TdahImagem,
     title: 'TDAH',
-    description: ' Acompanhamento especializado para TDAH em adultos e adolescentes, promovendo foco e organização.'
+    description: ' Acompanhamento especializado para TDAH em adultos e adolescentes, com diagnóstico criterioso, intervenções clínicas e psicoterapêuticas, além de orientações para familiares. O tratamento visa melhorar o foco, a organização, o desempenho acadêmico/profissional e a qualidade das relações interpessoais.'
+  },
+  {
+    image: TranstornoImagem,
+    title: 'Transtorno Bipolar',
+    description: ' Oferecemos diagnóstico preciso e tratamento contínuo para o transtorno bipolar, com foco na estabilização do humor, prevenção de episódios e promoção da autonomia. O acompanhamento é individualizado, visando o controle dos sintomas e o desenvolvimento de estratégias para uma vida mais estável e produtiva.'
   }
-];
+], []);
+
 
     const reviews = [
     {
@@ -67,14 +74,21 @@ export default function Home() {
 
 // Efeito para imagem de perfil sair do topo ao rolar a página
 
+const imageRef = useRef(null);
+
 useEffect(() => {
-    const onScroll = () => {
-      // Ajuste o valor conforme desejar para o efeito começar
-      setScrolled(window.scrollY > 150);
-    };
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  const onScroll = () => {
+    if (imageRef.current) {
+      if (window.scrollY > 150) {
+        imageRef.current.classList.add('image-out');
+      } else {
+        imageRef.current.classList.remove('image-out');
+      }
+    }
+  };
+  window.addEventListener('scroll', onScroll);
+  return () => window.removeEventListener('scroll', onScroll);
+}, []);
 
 
 
@@ -98,10 +112,10 @@ useEffect(() => {
       clearInterval(interval);
       setIsTyping(false);
     }
-  }, 25);
+  }, 60);
 
   return () => clearInterval(interval);
-}, [currentTreatment]);
+}, [currentTreatment,treatments]);
 
 
 
@@ -112,7 +126,7 @@ useEffect(() => {
     setCurrentTreatment((prev) =>
       prev === treatments.length - 1 ? 0 : prev + 1
     );
-  }, 6000); // troca a cada 6 segundos (ajuste como quiser)
+  }, 30000); // troca a cada 30 segundos (ajuste como quiser)
   return () => clearInterval(interval);
 }, [treatments.length]);
 
@@ -120,7 +134,7 @@ useEffect(() => {
     <div className="home-container">
       {/* Seção principal */}
       <div className="main-section">
-       <div className={`image-section ${scrolled ? ' image-out' : ''}`}>
+       <div className="image-section" ref={imageRef}>
           <img
             src={ImagemPerfil}
             alt="Médico Psiquiatra"
@@ -169,7 +183,7 @@ useEffect(() => {
   </button>
   <div className="treatment-overlay">
     <h3>{treatments[currentTreatment].title}</h3>
-    <p className="typewriter">{typedText}</p>
+    <p className={`typewriter${isTyping ? ' typing' : ''}`}>{typedText}</p>
    </div>
   </div>
  </div>

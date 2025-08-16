@@ -1,5 +1,5 @@
 .nova-consulta-form-container {
-  max-width: 420px;
+  max-width: 400px;
   margin: 48px auto;
   background: #fff;
   border-radius: 14px;
@@ -11,7 +11,7 @@
   text-align: center;
   color: #1d4127;
   margin-bottom: 24px;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .nova-consulta-form label {
@@ -22,12 +22,14 @@
 }
 
 .nova-consulta-form input[type="text"],
-.nova-consulta-form input[type="datetime-local"] {
+.nova-consulta-form input[type="datetime-local"],
+.nova-consulta-form input[type="email"],
+.nova-consulta-form input[type="tel"] {
   width: 100%;
   padding: 10px 12px;
   border-radius: 6px;
   border: 1px solid #b2b2b2;
-  font-size: 1rem;
+  font-size: 0.8rem;
   margin-top: 6px;
   margin-bottom: 2px;
   background: #f7faf9;
@@ -46,7 +48,7 @@
   border: none;
   border-radius: 6px;
   padding: 12px 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   margin-top: 10px;
@@ -67,4 +69,42 @@
   text-align: center;
   color: #1d4127;
   font-weight: 500;
+}
+
+/* Input estilizado */
+.react-datepicker__input-container input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #b2b2b2;
+  font-size: 0.8rem;
+  margin-top: 6px;
+  margin-bottom: 2px;
+  background: #f7faf9;
+  transition: border 0.2s;
+}
+
+.react-datepicker__input-container input:focus {
+  border: 1.5px solid #3a7bd5;
+  outline: none;
+}
+
+/* Contêiner principal do DatePicker */
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  display: block;
+}
+
+
+.react-datepicker__navigation.react-datepicker__navigation--next.react-datepicker__navigation--next--with-time {
+  right: 10px;
+  top: 10px;
+  width: 18px;
+  margin-right:80px;
+}
+
+.react-datepicker__navigation.react-datepicker__navigation--previous {
+  left: 10px;
+  top: 10px;
+  width: 18px;
 }

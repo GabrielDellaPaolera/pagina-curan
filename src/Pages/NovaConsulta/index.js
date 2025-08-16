@@ -1,14 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import "react-datepicker/dist/react-datepicker.css";
+import { db } from '../../firebaseConnection';
+import { collection, addDoc, Timestamp, onSnapshot } from 'firebase/firestore'
 import './NovaConsulta.css';
-import QRCode from 'react-qr-code';
+import DatePicker from "react-datepicker";
+import { ptBR } from 'date-fns/locale';
+
+
+
 
 export default function NovaConsulta() {
   const [nome, setNome] = useState('');
-  const [data, setData] = useState('');
+  const [data, setData] = useState(null);
   const [documento, setDocumento] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState('');
-  const [pix, setPix] = useState(null);
+  const [datasOcupadas, setDatasOcupadas] = useState([]);
+
+
+  
+  useEffect(() => {
+  const unsubscribe = onSnapshot(collection(db, 'consultas'), (snapshot) => {
+    const ocupadas = snapshot.docs.map(doc => doc.data().data.toDate().toISOString().slice(0,16));
+    setDatasOcupadas(ocupadas);
+  });
+
+  return () => unsubscribe();
+}, []);
+
+
+
 
   const formatDocumento = (value) => {
     value = value.replace(/\D/g, '').slice(0, 14);
@@ -31,46 +54,113 @@ export default function NovaConsulta() {
     setDocumento(formatDocumento(e.target.value));
   };
 
-  const handleNomeChange = (e) => {
+  const formatTelefone = (value) => {
+  value = value.replace(/\D/g, '').slice(0, 11);
+  if (value.length > 0) value = '(' + value;
+  if (value.length > 3) value = value.slice(0, 3) + ') ' + value.slice(3);
+  if (value.length > 10) value = value.slice(0, 10) + '-' + value.slice(10);
+  else if (value.length > 6) value = value.slice(0, 9) + '-' + value.slice(9);
+  return value;
+};
+
+const handleTelefoneChange = (e) => {
+  setTelefone(formatTelefone(e.target.value));
+};
+
+const handleNomeChange = (e) => {
     const value = e.target.value;
     setNome(value.replace(/\b\w/g, l => l.toUpperCase()));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMensagem('');
-    setPix(null);
 
-    if (!nome || !data || !documento) {
-      setMensagem('Preencha todos os campos obrigatórios.');
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // Validação de horário
+const hora = data.getHours();
+const minutos = data.getMinutes();
+const diaSemana = data.getDay();
+
+if (diaSemana === 0) {
+  setMensagem('As consultas não estão disponíveis aos domingos.');
+  setLoading(false);
+  return;
+}
+
+if (hora < 8 || hora >= 20 || minutos !== 0) {
+  alert('Horário inválido. Selecione um horário entre 08h e 20h.');
+  setMensagem('Horário inválido. Selecione um horário entre 08h e 20h.');
+  setLoading(false);
+  return;
+}
+  setMensagem('');
+
+  if (!nome || !data || !documento || !email) {
+    setMensagem('Preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    setMensagem('Digite um e-mail válido.');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    
+    const resp = await fetch('http://localhost:3333/api/pagamento', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nomeProduto: "Consulta Médica",
+        preco: 100,
+        idCliente: documento.replace(/\D/g, '')
+      })
+    });
+
+    const dataResp = await resp.json();
+
+    if (!dataResp.link) {
+      setMensagem('Erro ao gerar link de pagamento.');
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    try {
-      // Chama o backend para criar o Pix dinâmico
-      const resp = await fetch('http://localhost:3001/api/criar-pix', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, documento, data })
-      });
-      const charge = await resp.json();
-      if (charge.brCode) {
-        setPix(charge);
-        setMensagem('Escaneie o QR Code para pagar. O agendamento será confirmado automaticamente após o pagamento.');
-      } else {
-        setMensagem('Erro ao gerar QR Code Pix.');
-      }
-    } catch (error) {
-      setMensagem('Erro ao criar cobrança Pix.');
-    }
-    setLoading(false);
-  };
+    
+
+    const novoDoc = {
+      nome,
+      email,
+      mensagem,
+      telefone,
+      documento: documento.replace(/\D/g, ''),
+      status: 'Pendente',
+      data: Timestamp.fromDate(data), // usa a data escolhida
+      linkPagamento: dataResp.link,
+    };
+
+    
+    await addDoc(collection(db, 'consultas'), novoDoc);
+
+    
+    window.location.href = dataResp.link;
+
+  } catch (error) {
+    console.error(error);
+    setMensagem('Erro ao processar o pagamento.');
+  }
+
+  setLoading(false);
+};
 
   return (
     <div className="nova-consulta-form-container">
       <h2>Nova Consulta</h2>
       <form className="nova-consulta-form" onSubmit={handleSubmit}>
+
         <label>
           Nome*:
           <input
@@ -81,15 +171,60 @@ export default function NovaConsulta() {
             maxLength={35}
           />
         </label>
+
         <label>
-          Data*:
+        Data*:
+
+<DatePicker
+  selected={data}
+  onChange={(date) => setData(date)}
+  showTimeSelect
+  timeFormat="HH:mm"
+  timeIntervals={60}
+  timeCaption="Horário"
+  dateFormat="dd/MM/yyyy HH:mm"
+  minDate={new Date()}
+  filterDate={(date) => date.getDay() !== 0}
+  filterTime={(time) => {
+    const hour = time.getHours();
+    const minutes = time.getMinutes();
+    const formatted = time.toISOString().slice(0, 16);
+    return (
+      hour >= 8 &&
+      hour < 20 &&
+      minutes === 0 &&
+      !datasOcupadas.includes(formatted)
+    );
+  }}
+  placeholderText="Selecione a data e hora"
+  required
+  onKeyDown={(e) => e.preventDefault()}
+  locale={ptBR}
+/>
+
+        </label>
+
+        
+        <label>
+          Email*:
           <input
-            type="datetime-local"
-            value={data}
-            onChange={e => setData(e.target.value)}
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             required
           />
         </label>
+
+           <label>
+          Telefone*:
+          <input
+            type="tel"
+            value={telefone}
+            onChange={handleTelefoneChange}
+            required
+          />
+        </label>
+
         <label>
           Número do Documento*:
           <input
@@ -102,19 +237,10 @@ export default function NovaConsulta() {
           />
         </label>
         <button type="submit" disabled={loading}>
-          {loading ? 'Gerando Pix...' : 'Gerar QR Code Pix'}
+           {loading ? 'Redirecionando...' : 'Pagar e Confirmar Consulta'}
         </button>
         {mensagem && <p className="mensagem">{mensagem}</p>}
       </form>
-      {pix && (
-        <div style={{ textAlign: 'center', marginTop: 24 }}>
-          <h3>Pagamento</h3>
-          <QRCode value={pix.brCode} size={180} />
-          <p style={{ fontSize: 12, marginTop: 8 }}>
-            Após o pagamento, sua consulta será confirmada automaticamente.
-          </p>
-        </div>
-      )}
     </div>
-  );
-}
+  )
+};

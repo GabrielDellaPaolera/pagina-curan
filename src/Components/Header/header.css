@@ -12,7 +12,23 @@ header{
     padding: 32px 24px;
 }
 
-.logo{
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 90px;
+    width: auto;
+    max-width: 120px;
+}
+
+.logo img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.link{
     text-decoration: none;
     font-size: 16px;
     cursor: pointer;
@@ -20,6 +36,6 @@ header{
     font-weight: bold;
 }
 
-.logo:hover {
+.link:hover {
     color: #37804d; 
 }

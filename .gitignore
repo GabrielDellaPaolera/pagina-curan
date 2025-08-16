@@ -35,3 +35,6 @@ backend/service-account.json
 
 # Logs do backend
 /backend/npm-debug.log*
+
+# backend/.gitignore
+credenciais-firebase.json
